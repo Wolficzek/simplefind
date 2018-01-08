@@ -22,7 +22,7 @@ int find(char * path, char * argv[]){
             stat(dptr->d_name, &mystat);
 
             if( (strcmp(dptr->d_name, argv[1])) == 0){
-                /*Dane o pliku*/
+                /* File data */ 
                 pwd = getpwuid(mystat.st_uid);
                 grp = getgrgid(mystat.st_gid);
                 printf("Name: %s\n", dptr->d_name);
@@ -30,7 +30,7 @@ int find(char * path, char * argv[]){
                 printf((S_ISREG(mystat.st_mode)) ? "file\n" : "");
                 printf("Pwd: %s\n", pwd->pw_name);
                 printf("Grp: %s\n", grp->gr_name);
-                /*Uprawnienia*/
+                /*Permissions*/
                 printf((mystat.st_mode & S_IRUSR) ? "r" : "-");
                 printf((mystat.st_mode & S_IWUSR) ? "w" : "-");
                 printf((mystat.st_mode & S_IXUSR) ? "x" : "-");
@@ -48,10 +48,6 @@ int find(char * path, char * argv[]){
 
             if((strcmp(dptr->d_name, ".") != 0) && (strcmp(dptr->d_name, "..") != 0)){
                 if((S_ISDIR(mystat.st_mode))){
-                    /* Przeskakujemy po sciezkach katalogu za pomoca chdir
-                     * bo stat nie ogarnia i szuka zawsze w tej sciezce
-                     * gdzie odpala sie program
-                     */
                     chdir(dptr->d_name);
                     getcwd(cwd, 1024);
                     find(cwd, argv);
@@ -69,7 +65,7 @@ int main(int argc, char * argv[]) {
     char firstcwd[1024];
     
     if(argc >= 2){
-        /* obsluga bledow */
+        /* Error handling */
         if(argc > 3){
             printf("Invalid arguments. [file to find] [starting directory]\n");
             return -1;
@@ -80,7 +76,6 @@ int main(int argc, char * argv[]) {
             printf("Cant open directory.\n");
             return -1;
         }
-        /*Szukaj w katalogu*/
         if(argc == 3){
             dp = opendir(argv[2]);
             if(dp == NULL){
